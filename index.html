@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>ESP32 BLE コントローラ</h2>
+<button onclick="connect()">接続</button>
+<button onclick="stopBuzzer()">ブザー停止</button>
+
+<script>
+let characteristic;
+
+async function connect() {
+  const device = await navigator.bluetooth.requestDevice({
+    acceptAllDevices: true,
+    optionalServices: ['1234']
+  });
+
+  const server = await device.gatt.connect();
+  const service = await server.getPrimaryService('1234');
+  characteristic = await service.getCharacteristic('5678');
+
+  alert("接続成功");
+}
+
+async function stopBuzzer() {
+  const encoder = new TextEncoder();
+  await characteristic.writeValue(encoder.encode("1"));
+  alert("停止信号送信");
+}
+</script>
+</body>
+</html>
